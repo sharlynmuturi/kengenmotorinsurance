@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'companyvehicle.html' %}
+
+
+{% if user.is_authenticated %}
+   <center>
+        {% if searched %}
+            <h1> You Searched For "{{ searched }}" </h1>
+            <br/>
+            <ul>
+                {% for vehicle in company_vehicles %}
+                    <li>{{ vehicle.regno }} - {{ vehicle.area }} - {{ vehicle.status }}</li>
+                {% empty %}
+                    <li>No company vehicles found.</li>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+            <h1> Please Enter Search Item! </h1>
+        {% endif %}
+   </center>
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

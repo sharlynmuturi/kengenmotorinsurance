@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% include 'premium.html' %}
+{% if user.is_authenticated %}
+<center>
+ <h2>Fill in to Compute Premium</h2>
+<br/>
+
+<form method="POST" action="{% url 'premiumform' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Renders all fields including dropdowns and file input -->
+    <button type="submit">Compute Premium</button>
+    <br/><br/>
+
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+
+
+</form>
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

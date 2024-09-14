@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    {% include 'companyvehicle.html' %}
+
+{% if user.is_authenticated %}
+<center>
+ <h2>Fill in to Request or Cancel Cover</h2>
+<br/>
+
+<form method="POST" action="{% url 'companyvehicleform' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Renders all fields including dropdowns and file input -->
+    <button type="submit">Submit</button>
+    <br/><br/>
+
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+
+
+</form>
+
+{% else %}
+<h2> Please Log In to Fill Out Form </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+
+{% endblock %}
+
+</center>
+
+
+
+<!--     <h2>Fill in to Request or Cancel Cover for Company Vehicle</h2>
+<br/>
+
+<form method='POST' action="{% url 'companyvehicleform' %}">
+	{% csrf_token %}
+
+    <div class="mb-3">
+        <select class="form-control" id="dropdown4" name="status">
+            <option value="" disabled selected>Cover Request/Cancel</option>
+            <option value="active">Request Cover</option>
+            <option value="cancelled">Cancel Cover</option>
+        </select>
+    </div>
+
+  	<div class="mb-3">
+    	<input type="text" class="form-control" placeholder="Registration Number" name="regno" value="{{ regno }}">
+  	</div>
+   
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Area" name="area" value="{{ area }}">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Value of Vehicle" name="sumassured" value="{{ sumassured }}">
+     </div>
+
+
+   <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Make of Vehicle" name="make" value="{{ make }}">
+     </div>
+
+
+   <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Rating/CC" name="rating" value="{{ rating }}">
+     </div>
+
+   <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Chasis Number" name="chasisno" value="{{ chasisno }}">
+     </div>
+
+
+   <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Year of Manufacture" name="yom" value="{{ yom }}">
+     </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Commencement Date of Cover: m/d/Y" name="commencementdate" value="{{ commencementdate }}">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Date of Expiry/Cancel of Cover: m/d/Y" name="dateofcancelorexpiry" value="{{ dateofcancelorexpiry }}">
+    </div>
+
+
+   <div class="mb-3">
+        <input type="file" class="form-control" placeholder="Log Book" name="logbook" value="{{ logbook }}">
+    </div>
+
+  	<br/>
+
+  	<button type="submit" class="btn btn-secondary">Submit</button>
+</form>
+</center>-->

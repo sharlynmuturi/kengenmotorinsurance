@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KenGen Motor Insurance</title>
+    <style>
+		.logo {
+		    max-height: 100%; /* Adjust height as needed */
+		    max-width: 100%;  /* Maintain aspect ratio */
+		    margin-right: 10px; /* Space between logo and text */
+		}
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+/*            background-color: navyblue;*/
+            color: black;
+            padding: 0px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3em;
+        }
+        header p {
+            font-size: 1.2em;
+        }
+    
+        .content-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 30px;
+        }
+        .content-box {
+            width: 30%;
+            padding: 20px;
+            /*background-color: white;*/
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .content-box h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        .content-box p {
+            font-size: 1.1em;
+            color: #7f8c8d;
+        }
+        footer {
+            /*background-color: black;*/
+            color: black;
+            text-align: center;
+            padding: 0px;
+            margin-top: 20px;
+        }
+        footer a {
+            color: #1abc9c;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+         <img src="{% static 'website/images/home1.png' %}" alt="Logo" class="logo" width="100" height="100">
+
+        <h1>KenGen Motor Insurance</h1>
+        <p><i>Offering the best solutions for motor cover under our company policy.</i></p>
+
+
+</header>
+
+
+<section class="content-section">
+    <div class="content-box">
+        <h3>Request for Cover</h3>
+        <p>Request for Cover under Company's Scheme</p>
+          <a class="nav-link" href="{% url 'staffvehicleform' %}">Fill Form to Request Cover</a>
+    </div>
+
+    <div class="content-box">
+        <h3>Compute Premium</h3>
+        <p>Compute premium payable for your cover</p>
+          <a class="nav-link" href="{% url 'premiumform' %}">Fill Form for Premium Computations</a>
+    </div>
+
+    <div class="content-box">
+        <h3>View Cover Details of Vehicles</h3>
+        <p>Access detailed records of vehicles.</p>
+          <a class="nav-link" href="{% url 'allstaffvehicle' %}">Staff Motor</a>
+          <a class="nav-link" href="{% url 'allcompanyvehicle' %}">Company Motor</a>
+          <a class="nav-link" href="{% url 'allpremium' %}">Premium Payments</a>
+    </div>
+
+
+</section>
+
+<!-- <footer>
+    <p>&copy; 2024 KenGen Motor Insurance Website. All rights reserved. | <a href="/privacy-policy">Privacy Policy</a></p>
+</footer> -->
+
+</body>
+</html>
+
+{% endblock %} -->

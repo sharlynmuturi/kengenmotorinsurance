@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    {% include 'premium.html' %}
+    {% if user.is_authenticated %}
+
+    <h2>Update Premium Record: {{ premium.regno }}</h2>
+    <h3> Update Field(s) and Save Changes </h3>
+
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Update Record</button>
+    </form>
+
+        <a href="{% url 'allpremium' %}" class="btn btn-secondary">Cancel</a>
+
+            <br/>
+            <br>
+          <form method="POST" action="{% url 'delete_premium' form.instance.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete Record</button>
+            </form>
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

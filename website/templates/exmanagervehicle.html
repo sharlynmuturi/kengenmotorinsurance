@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'staffvehicle.html' %}
+{% if user.is_authenticated %}
+
+    <h2>Ex-Directors/Managers' Covers</h2>
+        <a href="{% url 'export_ex_managers_vehicles' %}" class="btn btn-primary">Export All To Excel</a>
+
+    <br/> <br/>
+
+    <ul>
+        {% for form in forms %}
+            <li>
+                {{ form.as_p }}
+                <hr>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

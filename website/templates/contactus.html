@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Contact Information -->
+        <div class="col-md-6">
+            <h2>Our Contacts</h2>
+            <p><strong>Head Office</strong></p>
+            <p>KenGen Pension Plaza II<br/>
+            Kolobot Road, Parklands<br/>
+            P.O. BOX 47936, 00100, Nairobi</p>
+            <p><strong>TEL:</strong></p>
+            <ul>
+                <li>+254 711 036-000</li>
+                <li>+254 732 116-000</li>
+                <li>+254 020 366-6000</li>
+            </ul>
+            <p><strong>Email:</strong> <a href="mailto:pr@kengen.co.ke">pr@kengen.co.ke</a></p>
+        </div>
+        
+        <!-- Contact Form -->
+        <div class="col-md-6">
+            <h2>Contact Us</h2>
+            <p>If you have any questions or inquiries, feel free to contact us using the form below.</p>
+            
+            <form method="POST" action="{% url 'contactus' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject of your message" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="5" placeholder="Type your message here" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

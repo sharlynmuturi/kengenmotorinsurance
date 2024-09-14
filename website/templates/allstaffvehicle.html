@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'staffvehicle.html' %}
+{% if user.is_authenticated %}
+
+      <form class="d-flex" role="search" method=POST action="{% url 'searchallstaffvehicle' %}">
+      {% csrf_token %}
+        <input class="form-control me-2" type="search" placeholder="Search Staff Vehicle" aria-label="Search" name="searchedstaffvehicle" style="width: 200px;">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </form>
+
+
+
+    <h2>All Cover Records</h2>
+    <a href="{% url 'export_staff_vehicles' %}" class="btn btn-primary">Export All to Excel</a>
+    <br>
+
+    {% if searched %}
+        <h3>Search Results for: "{{ searched }}"</h3>
+    {% endif %}
+    
+    <br/>
+
+    <ul>
+        {% for form in forms %}
+            <li>
+                {{ form.as_p }}
+                
+<!--                 {% if staff_vehicle.logbook %}
+                    <a href="{% url 'download_logbook' staff_vehicle.pk %}" class="btn btn-primary">Download Logbook</a>
+                {% endif %} -->
+
+
+                <!-- Update button with a link to the update view -->
+                <a href="{% url 'update_staff_vehicle' form.instance.pk %}" class="btn btn-primary">Update</a>
+
+                <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+
+                <hr>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+
+{% endblock %}
+
+
+

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+/*            background-color: #f4f4f4;*/
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #result {
+            background-color: #ffcf79;
+            color: #0056b3;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 8px 0;
+        }
+
+        .formula-section {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .formula-section h3 {
+            color: #0056b3;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #0056b3;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #004494;
+        }
+    </style>
+<body>
+    <div>
+
+        <h1 id='result'>Premium Payable: {{ premiumpayable }} </h1>
+        <p> Computed ProRata: {{ prorata }} </p>
+        <p> Computed Grandtotal: {{ grandtotal }} </p>
+        <p> Computed Amount Remaining: {{ amountremaining }} </p>
+
+
+
+        <div class="formula-section">
+            <h3>Formulas</h3>
+            <p><strong>Prorata calculation:</strong></p>
+            
+
+            <p><strong>Grand Total Calculation:</strong></p>
+            <p><code>grandtotal = prorata + windscreenadditionalpremium + radioadditionalpremium + courtesycar + excessprotector</code></p>
+            <p><strong>Levies Calculation:</strong></p>
+            <p><strong>Premium Payable Calculation:</strong></p>
+            <p><code>premiumpayable = grandtotal + levies</code></p>
+            <p><strong>Amount Remaining Calculation:</strong></p>
+            <p><code>amountremaining = premiumpayable - amountpaid</code></p>
+        </div>
+
+        <a href="{% url 'premiumform' %}" class="back-button">Back to Form</a>
+    </div>
+</body>
+</html>
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

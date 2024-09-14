@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'companyvehicle.html' %}
+
+{% if user.is_authenticated %}
+
+    <h2>Update Vehicle: {{ vehicle.regno }}</h2>
+    <h3> Update Field(s) then Save Changes </h3>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    </form>
+
+    <br/>
+
+        <a href="{% url 'allcompanyvehicle' %}" class="btn btn-secondary">Cancel</a>
+
+      <form method="POST" action="{% url 'delete_company_vehicle' form.instance.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete Vehicle</button>
+        </form>
+
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

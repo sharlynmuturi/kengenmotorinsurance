@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+{% if form.errors %}
+
+
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      There was an error with your form
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+{% endif %}
+
+ <h1>Register</h1>
+<br/>
+
+<form method="POST" action="{% url 'registeruser' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+  
+      <br/>
+
+  <button type="submit" class="btn btn-secondary">Submit</button>
+    <br/><br/>
+
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+
+
+</form>
+
+{% else %}
+<h2> Log In to Register User </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+{% endblock %}

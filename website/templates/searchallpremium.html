@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% include 'premium.html' %}
+
+{% if user.is_authenticated %}
+   <center>
+        {% if searched %}
+            <h1> You Searched For "{{ searched }}" </h1>
+            <br/>
+            <ul>
+                {% for vehicle in premium %}
+                    <li>{{ vehicle.regno }} - {{ vehicle.firstname }} {{ vehicle.lastname }} - {{ vehicle.status }}</li>
+                {% empty %}
+                    <li>No Premium Record found.</li>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+            <h1> Please Enter Search Item! </h1>
+        {% endif %}
+   </center>
+
+{% else %}
+<h2> Please Log In to View Page </h2>
+    <a href="{% url 'loginuser' %}">Login Here</a>
+
+{% endif %}
+
+{% endblock %}

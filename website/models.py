@@ -1,0 +1,136 @@
+from django.db import models
+import datetime
+from django.utils import timezone
+
+
+# Create your models here.
+class StaffVehicle(models.Model):
+	regno = models.CharField(max_length=100, unique=True)
+	firstname = models.CharField(max_length=100, null=True)
+	middlename = models.CharField(max_length=100, blank=True, null=True)
+	lastname = models.CharField(max_length=100, null=True)
+	staffno = models.IntegerField(null=True)
+	employmentstatuschoices = [
+	        ('staff', 'Staff'),
+	        ('director/manager', 'Director/Manager'),
+	        ('ex-staff', 'Ex-Staff'),
+	        ('ex-director/manager', 'Ex-Director/Manager'),
+	]
+	employmentstatus = models.CharField(max_length=100, choices=employmentstatuschoices, null=True)
+	email = models.EmailField(default='example@example.com', null=True)
+	area = models.CharField(max_length=100, null=True)
+	phoneno = models.CharField(max_length=15, null=True)
+	idno = models.IntegerField(null=True)
+	krapin = models.CharField(max_length=100, null=True)
+	sumassured = models.CharField(max_length=100, null=True)
+	make = models.CharField(max_length=100, null=True)  # Default is a string 'Unknown Make'
+	rating = models.CharField(max_length=100,null=True)  # Default is a string 'Unrated'
+	chasisno = models.CharField(max_length=100, null=True)  # Default is 'N/A'
+	yom = models.IntegerField(null=True)  # Default year of manufacture is 2000
+	typeofvehiclechoices = [
+		('private', 'Private'),
+		('commercial', 'Commercial'),
+	]
+	typeofvehicle = models.CharField(max_length=100, choices=typeofvehiclechoices, null=True)
+	typeofcoverchoices = [
+		('comprehensive', 'Comprehensive'),
+		('thirdparty', 'ThirdParty'),
+	]
+	typeofcover = models.CharField(max_length=100, choices=typeofcoverchoices, null=True)
+	commencementdate = models.DateField(null=True)
+	logbook = models.FileField(blank=True,null=True)  # Optional file upload
+	statuschoices = [
+    	('absent', 'Cover Not Provided'),	
+    	('active', 'Cover Active'),
+    	('cancelled', 'Cover Cancelled'),
+    ]
+	status = models.CharField(max_length=100, choices=statuschoices, default='absent', blank=True, null=True)
+	dateofcancelorexpiry = models.DateField(null=True, blank=True)
+
+	def __str__(self):
+		return self.regno
+
+
+class CompanyVehicle(models.Model):
+	regno = models.CharField(max_length=100, unique=True)
+	area = models.CharField(max_length=100, null= True, blank=True)
+	sumassured = models.IntegerField(null=True)
+	make = models.CharField(max_length=100, null=True)  # Default is a string 'Unknown Make'
+	rating = models.CharField(max_length=100, null=True)  # Default is a string 'Unrated'
+	chasisno = models.CharField(max_length=100, null=True)  # Default is 'N/A'
+	yom = models.IntegerField(null=True)  # Default year of manufacture is 2000
+	commencementdate = models.DateField(null=True)
+	logbook = models.FileField(blank=True, null=True)  # Optional file upload
+	statuschoices = [
+	    ('absent', 'Cover Not Provided'),
+    	('active', 'Cover Active'),
+    	('cancelled', 'Cover Cancelled'),
+    ]
+	status = models.CharField(max_length=100, choices=statuschoices, default='absent', blank=True, null=True)
+	dateofcancelorexpiry = models.DateField(null=True, blank=True)
+
+	def __str__(self):
+		return self.regno
+
+
+
+class Premium(models.Model):
+	regno = models.CharField(max_length=100)
+	firstname = models.CharField(max_length=100)
+	middlename = models.CharField(max_length=100, blank=True)
+	lastname = models.CharField(max_length=100, blank=True)
+	staffno = models.IntegerField()
+	sumassured = models.IntegerField()
+	commencementdate = models.DateField()
+	dateofcancelorexpiry = models.DateField()
+	premiumrate = models.DecimalField(max_digits=5, decimal_places=2)
+	prorata = models.IntegerField(default=0, blank=True)
+	windscreenadditionalpremium = models.IntegerField(default=0)
+	radioadditionalpremium = models.IntegerField(default=0)
+	courtesycar = models.IntegerField(default=0)
+	excessprotector = models.IntegerField(default=0)
+	grandtotal = models.IntegerField(default=0, blank=True)
+	levies = models.IntegerField(default=0, blank=True)
+	premiumpayable = models.IntegerField(default=0, blank=True)
+	statuschoices = [
+    	('paid', 'Payment Made'),
+    	('partpaid', 'Part Payment'),
+    	('unpaid', 'Payment Not Made'),
+    ]
+	status = models.CharField(max_length=100, choices=statuschoices, blank=True)
+	amountpaid = models.IntegerField(default=0, blank=True)
+	amountremaining = models.IntegerField(null=True, default=0, blank=True)
+	paymentmethodchoices = [
+    	('cashpayment', 'Cash Payment'),
+    	('salarydeduction', 'Salary Deduction'),
+    	('otherpayment', 'Other'),
+
+    ]
+	paymentmethod = models.CharField(max_length=100, choices=paymentmethodchoices, blank=True)
+	amountrefund = models.IntegerField(null=True, default=0, blank=True)
+	refundstatuschoices = [
+    	('refunded', 'Refund Made'),
+    	('norefund', 'No Refund Made'),
+    ]
+	refundstatus = models.CharField(max_length=100, choices=refundstatuschoices, null=True, blank=True)
+
+
+	def save(self, *args, **kwargs):
+		total_days = (self.dateofcancelorexpiry - self.commencementdate).days
+        # Assuming a full policy year has 365 days
+		if total_days < 365:
+			prorata_factor = total_days / 365
+			self.prorata = int((self.sumassured * self.premiumrate / 100) * prorata_factor)
+		else:
+            # If policy is for a full year, no prorating needed
+			self.prorata = int(self.sumassured * self.premiumrate / 100)
+
+        # Calculate premium payable
+		self.grandtotal = self.prorata + self.windscreenadditionalpremium + self.radioadditionalpremium + self.courtesycar + self.excessprotector
+		self.premiumpayable = self.grandtotal + self.levies
+		self.amountremaining = self.premiumpayable - self.amountpaid
+
+		super().save(*args, **kwargs)
+
+	def __str__(self):
+		return self.regno
