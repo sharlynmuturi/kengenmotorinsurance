@@ -1,4 +1,7 @@
 import os
+import django_heroku
+import dj_database_url
+from decouple import config
 
 from pathlib import Path
 
@@ -41,6 +44,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'djangodb.urls'
@@ -129,6 +133,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'website/static',
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -141,3 +146,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 
 # MEDIA_URL: URL that serves the media files
 MEDIA_URL = '/uploads/'
+
+
+
+django_heroku.settings(locals())
