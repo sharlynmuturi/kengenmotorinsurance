@@ -81,6 +81,11 @@ class Premium(models.Model):
 	lastname = models.CharField(max_length=100, blank=True)
 	staffno = models.IntegerField()
 	sumassured = models.IntegerField()
+	typeofcoverchoices = [
+		('comprehensive', 'Comprehensive'),
+		('thirdparty', 'ThirdParty'),
+	]
+	typeofcover = models.CharField(max_length=100, choices=typeofcoverchoices, null=True)
 	commencementdate = models.DateField()
 	dateofcancelorexpiry = models.DateField()
 	premiumrate = models.DecimalField(max_digits=5, decimal_places=2)

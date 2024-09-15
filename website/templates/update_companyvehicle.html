@@ -14,9 +14,9 @@
         <button type="submit" class="btn btn-success">Save Changes</button>
     </form>
 
-    <br/>
-
         <a href="{% url 'allcompanyvehicle' %}" class="btn btn-secondary">Cancel</a>
+    <br/>
+    <br/>
 
       <form method="POST" action="{% url 'delete_company_vehicle' form.instance.pk %}">
             {% csrf_token %}

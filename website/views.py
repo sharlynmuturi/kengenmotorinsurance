@@ -82,6 +82,45 @@ def thankyou(request):
 
 
 ##################################################################################### PREMIUMS ##########################
+def comprehensivepremium(request):
+    comprehensivepremium = Premium.objects.filter(typeofcover='comprehensive')
+    forms = [PremiumForm(instance=vehicle) for vehicle in comprehensivepremium]
+    return render(request, 'comprehensivepremium.html', {'forms': forms})
+
+def thirdpartypremium(request):
+    thirdpartypremium = Premium.objects.filter(typeofcover='thirdparty')
+    forms = [PremiumForm(instance=vehicle) for vehicle in thirdpartypremium]
+    return render(request, 'thirdpartypremium.html', {'forms': forms})
+
+def export_comprehensive_premiums(request):
+    # Filter the queryset to include only active vehicles
+    vehicles = Premium.objects.filter(typeofcover='comprehensive')
+
+    # Use the resource to handle the export
+    resource = PremiumResource()
+    dataset = resource.export(queryset=vehicles)  # Pass the filtered queryset to the export
+
+    filename = 'comprehensive_premiums_covers.xlsx'
+    response = HttpResponse(dataset.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
+
+def export_thirdparty_premiums(request):
+    # Filter the queryset to include only active vehicles
+    vehicles = Premium.objects.filter(typeofcover='thirdparty')
+
+    # Use the resource to handle the export
+    resource = PremiumResource()
+    dataset = resource.export(queryset=vehicles)  # Pass the filtered queryset to the export
+
+    filename = 'thirdparty_premiums_covers.xlsx'
+    response = HttpResponse(dataset.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
+
+
 def delete_premium(request, pk):
     vehicle = get_object_or_404(Premium, pk=pk)
     

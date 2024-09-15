@@ -12,6 +12,11 @@ urlpatterns = [
     path('thankyou', views.thankyou, name="thankyou"),
     path('contactus', views.contactus, name="contactus"),
 
+    path('comprehensivepremium', views.comprehensivepremium, name="comprehensivepremium"),
+    path('thirdpartypremium', views.thirdpartypremium, name="thirdpartypremium"),
+
+    path('export_thirdparty_premiums/', views.export_thirdparty_premiums, name='export_thirdparty_premiums'),
+    path('export_comprehensive_premiums/', views.export_comprehensive_premiums, name='export_comprehensive_premiums'),
 
     path('premium/', views.premium, name="premium"),
     path('premiumform', views.premiumform, name="premiumform"),
