@@ -1,8 +1,0 @@
-<h1>Confirm Deletion</h1>
-<p>Are you sure you want to delete the vehicle with registration number {{ vehicle.regno }}?</p>
-
-<form method="POST">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a href="{% url 'update_staff_vehicle' vehicle.pk %}" class="btn btn-secondary">Cancel</a>
-</form>
