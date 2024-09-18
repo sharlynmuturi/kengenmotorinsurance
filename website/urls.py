@@ -2,21 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('computedpremium/<int:pk>/', views.computedpremium, name='computedpremium'),
-
-    path('delete_staff_vehicle/<int:pk>/', views.delete_staff_vehicle, name='delete_staff_vehicle'),
-    path('delete_company_vehicle/<int:pk>/', views.delete_company_vehicle, name='delete_company_vehicle'),
-    path('delete_premium/<int:pk>/', views.delete_premium, name='delete_premium'),
-
     path('', views.home, name="home"),
     path('thankyou', views.thankyou, name="thankyou"),
     path('contactus', views.contactus, name="contactus"),
 
-    path('comprehensivepremium', views.comprehensivepremium, name="comprehensivepremium"),
-    path('thirdpartypremium', views.thirdpartypremium, name="thirdpartypremium"),
-
-    path('export_thirdparty_premiums/', views.export_thirdparty_premiums, name='export_thirdparty_premiums'),
-    path('export_comprehensive_premiums/', views.export_comprehensive_premiums, name='export_comprehensive_premiums'),
 
     path('premium/', views.premium, name="premium"),
     path('premiumform', views.premiumform, name="premiumform"),
@@ -28,6 +17,9 @@ urlpatterns = [
     path('salarydeduction', views.salarydeduction, name="salarydeduction"),
     path('otherpayment', views.otherpayment, name="otherpayment"),
     path('premiumrefund', views.premiumrefund, name="premiumrefund"),
+    path('comprehensivepremium', views.comprehensivepremium, name="comprehensivepremium"),
+    path('thirdpartypremium', views.thirdpartypremium, name="thirdpartypremium"),
+
     path('export_premiums/', views.export_premiums, name='export_premiums'),
     path('export_cash_payments/', views.export_cash_payments, name='export_cash_payments'),
     path('export_salary_deductions/', views.export_salary_deductions, name='export_salary_deductions'),
@@ -37,8 +29,11 @@ urlpatterns = [
     path('export_partpaid_premiums/', views.export_partpaid_premiums, name='export_partpaid_premiums'),
     path('export_refunded_premiums/', views.export_refunded_premiums, name='export_refunded_premiums'),
     path('searchallpremium', views.searchallpremium, name='searchallpremium'),
+    path('premium/<int:pk>/', views.computedpremium, name='computedpremium'),
     path('premium/update/<int:pk>/', views.update_premium, name='update_premium'),
-
+    path('delete_premium/<int:pk>/', views.delete_premium, name='delete_premium'),
+    path('export_thirdparty_premiums/', views.export_thirdparty_premiums, name='export_thirdparty_premiums'),
+    path('export_comprehensive_premiums/', views.export_comprehensive_premiums, name='export_comprehensive_premiums'),
 
     path('companyvehicle', views.companyvehicle, name="companyvehicle"),
     path('companyvehicleform', views.companyvehicleform, name="companyvehicleform"),
@@ -52,8 +47,7 @@ urlpatterns = [
     path('export-company-vehicles/', views.export_company_vehicles, name='export_company_vehicles'),
     path('companyvehicle/update/<int:vehicle_id>/', views.update_company_vehicle, name='update_company_vehicle'),
     path('searchallcompanyvehicle', views.searchallcompanyvehicle, name='searchallcompanyvehicle'),
-
-
+    path('delete_company_vehicle/<int:pk>/', views.delete_company_vehicle, name='delete_company_vehicle'),
 
     path('staffvehicle', views.staffvehicle, name="staffvehicle"),
     path('staffvehicleform', views.staffvehicleform, name="staffvehicleform"),
@@ -84,4 +78,6 @@ urlpatterns = [
     path('update-vehicle/<int:vehicle_id>/', views.update_vehicle, name='update_vehicle'),
     path('staffvehicle/update/<int:vehicle_id>/', views.update_staff_vehicle, name='update_staff_vehicle'),
     path('searchallstaffvehicle', views.searchallstaffvehicle, name='searchallstaffvehicle'),
+    path('delete_staff_vehicle/<int:pk>/', views.delete_staff_vehicle, name='delete_staff_vehicle'),
+
 ]

@@ -82,20 +82,26 @@ def premium(request):
     all_premium = Premium.objects.all()
     return render(request, 'premium.html', {'all':all_premium})
 
+
 def premiumform(request):
     if request.method == "POST":
         form = PremiumForm(request.POST, request.FILES)  # Include request.FILES for file input
         if form.is_valid():
-            form.save()
+            # Save the form, which will trigger the model's save method
+            premium = form.save()
+            # Display a success message
             messages.success(request, 'Premium Successfully Computed and Recorded!')
-            return redirect('allpremium')
-            # return render(request, 'computedpremium.html')  # Return the form with values
+            # Redirect to the computedpremium view with the premium object's ID
+            return redirect('computedpremium', pk=premium.pk)
         else:
             messages.error(request, 'There was an error in your input. Please check for error messages and try again.')
-            return render(request, 'premiumform.html', {'form': form})  # Return the form with errors
+            # Render the form with errors
+            return render(request, 'premiumform.html', {'form': form})
     else:
-        form = PremiumForm()  # Create an empty form for GET request
+        # Create an empty form for GET request
+        form = PremiumForm()
         return render(request, 'premiumform.html', {'form': form})
+
 
 def searchallpremium(request):
     if request.method == "POST":
@@ -105,7 +111,9 @@ def searchallpremium(request):
     else:
         return render(request, 'searchallpremium.html', {})
 
+
 def update_premium(request, pk):
+    # Retrieve the Premium object with the given primary key (pk)
     premium = get_object_or_404(Premium, pk=pk)
     if request.method == 'POST':
         # Bind the form to the POST data and the specific instance of the Premium model
@@ -115,15 +123,14 @@ def update_premium(request, pk):
             form.save()
             # Optionally, display a success message
             messages.success(request, 'Premium record updated successfully.')
-            # Redirect to a different page after saving (could be the list view or details view)
-            return redirect('allpremium')
+            # Redirect to the detail view of the updated record
+            return redirect('update_premium', pk=premium.pk)
         else:
             # If the form is not valid, return errors
             messages.error(request, 'There was an error updating the premium record. Please check your input.')
     else:
         # If it's a GET request, instantiate the form with the existing premium data
         form = UpdatePremiumForm(instance=premium)
-
     # Render the template with the form
     return render(request, 'update_premium.html', {'form': form, 'premium': premium})
 
@@ -161,23 +168,21 @@ def thirdpartypremium(request):
 def computedpremium(request, pk):
     # Retrieve the premium object
     premium = get_object_or_404(Premium, pk=pk)
-
     if request.method == 'POST':
         # Create a form instance with POST data and the current premium instance
         form = PremiumForm(request.POST, instance=premium)
-
         if form.is_valid():
             # Save the form, which will trigger the model's save method
             form.save()
-
             # Extract computed data directly from the model instance
+            annualpremium = premium.annualpremium
             prorata = premium.prorata
             grandtotal = premium.grandtotal
             premiumpayable = premium.premiumpayable
             amountremaining = premium.amountremaining
-            
             # Render the results in computedpremium.html
             return render(request, 'computedpremium.html', {
+                'annualpremium': annualpremium, 
                 'prorata': prorata,
                 'grandtotal': grandtotal,
                 'premiumpayable': premiumpayable,
@@ -186,9 +191,9 @@ def computedpremium(request, pk):
     else:
         # Create a form instance with the current premium object for GET request
         form = PremiumForm(instance=premium)
-
     # If not a POST request or form is invalid, render the form template
     return render(request, 'premiumform.html', {'form': form})
+
 
 def paidpremium(request):
     paidpremiums = Premium.objects.filter(status='paid')

@@ -150,3 +150,7 @@ MEDIA_URL = '/uploads/'
 
 
 django_heroku.settings(locals())
+
+# settings.py
+DATE_FORMAT = '%m/%d/%Y'  # Format dates in templates (e.g., 09/18/2024)
+DATE_INPUT_FORMATS = ['%m/%d/%Y']  # Accept date input in forms as month/day/year

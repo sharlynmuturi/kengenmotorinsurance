@@ -8,6 +8,9 @@ from datetime import date
 import datetime
 from django.utils import timezone
 
+from decimal import Decimal
+
+
 
 class StaffVehicleForm(forms.ModelForm):
     class Meta:
@@ -65,6 +68,7 @@ class PremiumForm(forms.ModelForm):
         cleaned_data = super().clean()
         
         # Getting form data
+        annualpremium = cleaned_data.get('annualpremium', 0)  # Default to 0 if None
         prorata = cleaned_data.get('prorata', 0)  # Default to 0 if None
         grandtotal = cleaned_data.get('grandtotal', 0)  # Default to 0 if None        
         premiumpayable = cleaned_data.get('premiumpayable', 0)  # Default to 0 if None
@@ -80,16 +84,14 @@ class PremiumForm(forms.ModelForm):
         amountpaid = cleaned_data.get('amountpaid', 0)
         amountremaining = cleaned_data.get('amountremaining', 0)
 
-
-        # Perform prorata calculation
+       # Handle prorata calculation
         if commencementdate and dateofcancelorexpiry:
-            total_days = (dateofcancelorexpiry - commencementdate).days
-            # Assuming a full policy year has 365 days
-            if total_days < 365:
-                prorata_factor = total_days / 365
-                prorata = int((sumassured * premiumrate / 100) * prorata_factor)
-            else:
-                prorata = int(sumassured * premiumrate / 100)
+            total_days = (dateofcancelorexpiry - commencementdate).days + 1  # Include the end date in the calculation
+            # Convert sumassured and premiumrate to Decimal for consistency
+            annualpremium = Decimal(sumassured) * Decimal(premiumrate) / Decimal(100)
+            prorata_factor = Decimal(total_days) / Decimal(365)
+            prorata = annualpremium * prorata_factor
+            prorata = int(prorata)
         else:
             prorata = 0
 
@@ -98,6 +100,7 @@ class PremiumForm(forms.ModelForm):
         amountremaining = premiumpayable - amountpaid
 
         # Set the calculated fields
+        cleaned_data['annualpremium'] = annualpremium
         cleaned_data['prorata'] = prorata
         cleaned_data['grandtotal'] = grandtotal
         cleaned_data['premiumpayable'] = premiumpayable
@@ -133,6 +136,7 @@ class UpdatePremiumForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         # Getting form data
+        annualpremium = cleaned_data.get('annualpremium', 0)  # Default to 0 if None
         prorata = cleaned_data.get('prorata', 0)  # Default to 0 if None
         grandtotal = cleaned_data.get('grandtotal', 0)  # Default to 0 if None        
         premiumpayable = cleaned_data.get('premiumpayable', 0)  # Default to 0 if None
@@ -148,16 +152,18 @@ class UpdatePremiumForm(forms.ModelForm):
         amountpaid = cleaned_data.get('amountpaid', 0)
         amountremaining = cleaned_data.get('amountremaining', 0)
 
+
         # Handle prorata calculation
         if commencementdate and dateofcancelorexpiry:
-            total_days = (dateofcancelorexpiry - commencementdate).days
-            if total_days < 365:
-                prorata_factor = total_days / 365
-                prorata = int((sumassured * premiumrate / 100) * prorata_factor)
-            else:
-                prorata = int(sumassured * premiumrate / 100)
+            total_days = (dateofcancelorexpiry - commencementdate).days + 1  # Include the end date in the calculation
+            # Convert sumassured and premiumrate to Decimal for consistency
+            annualpremium = Decimal(sumassured) * Decimal(premiumrate) / Decimal(100)
+            prorata_factor = Decimal(total_days) / Decimal(365)
+            prorata = annualpremium * prorata_factor
+            prorata = int(prorata)
         else:
             prorata = 0
+
 
         grandtotal = prorata + windscreenadditionalpremium + radioadditionalpremium + courtesycar + excessprotector
         premiumpayable = grandtotal + levies
@@ -165,6 +171,7 @@ class UpdatePremiumForm(forms.ModelForm):
 
 
         # Ensure fields are set to calculated values
+        cleaned_data['annualpremium'] = annualpremium
         cleaned_data['prorata'] = prorata
         cleaned_data['grandtotal'] = grandtotal
         cleaned_data['premiumpayable'] = premiumpayable

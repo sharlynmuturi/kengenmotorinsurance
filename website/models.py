@@ -37,7 +37,7 @@ class StaffVehicle(models.Model):
 		('thirdparty', 'ThirdParty'),
 	]
 	typeofcover = models.CharField(max_length=100, choices=typeofcoverchoices, null=True)
-	commencementdate = models.DateField(null=True)
+	commencementdate = models.DateField(null=True, default=datetime.date.today)
 	logbook = models.FileField(blank=True,null=True)  # Optional file upload
 	statuschoices = [
     	('absent', 'Cover Not Provided'),	
@@ -59,7 +59,7 @@ class CompanyVehicle(models.Model):
 	rating = models.CharField(max_length=100, null=True)  # Default is a string 'Unrated'
 	chasisno = models.CharField(max_length=100, null=True)  # Default is 'N/A'
 	yom = models.IntegerField(null=True)  # Default year of manufacture is 2000
-	commencementdate = models.DateField(null=True)
+	commencementdate = models.DateField(null=True, default=datetime.date.today)
 	logbook = models.FileField(blank=True, null=True)  # Optional file upload
 	statuschoices = [
 	    ('absent', 'Cover Not Provided'),
@@ -76,66 +76,50 @@ class CompanyVehicle(models.Model):
 
 class Premium(models.Model):
 	regno = models.CharField(max_length=100)
-	firstname = models.CharField(max_length=100)
-	middlename = models.CharField(max_length=100, blank=True)
-	lastname = models.CharField(max_length=100, blank=True)
-	staffno = models.IntegerField()
-	sumassured = models.IntegerField()
+	firstname = models.CharField(max_length=100, null=True)
+	middlename = models.CharField(max_length=100, blank=True, null=True)
+	lastname = models.CharField(max_length=100, blank=True, null=True)
+	staffno = models.IntegerField(null=True, blank=True)
 	typeofcoverchoices = [
 		('comprehensive', 'Comprehensive'),
 		('thirdparty', 'ThirdParty'),
 	]
 	typeofcover = models.CharField(max_length=100, choices=typeofcoverchoices, null=True)
-	commencementdate = models.DateField()
-	dateofcancelorexpiry = models.DateField()
+	commencementdate = models.DateField(default=datetime.date.today)
+	dateofcancelorexpiry = models.DateField(default=datetime.date.today)
+	sumassured = models.IntegerField()
 	premiumrate = models.DecimalField(max_digits=5, decimal_places=2)
+	annualpremium = models.IntegerField(default=0, blank=True)
 	prorata = models.IntegerField(default=0, blank=True)
 	windscreenadditionalpremium = models.IntegerField(default=0)
 	radioadditionalpremium = models.IntegerField(default=0)
 	courtesycar = models.IntegerField(default=0)
 	excessprotector = models.IntegerField(default=0)
-	grandtotal = models.IntegerField(default=0, blank=True)
-	levies = models.IntegerField(default=0, blank=True)
-	premiumpayable = models.IntegerField(default=0, blank=True)
+	grandtotal = models.IntegerField(default=0, blank=True, null=True)
+	levies = models.IntegerField(default=0, blank=True, null=True)
+	premiumpayable = models.IntegerField(default=0, blank=True, null=True)
+	amountpaid = models.IntegerField(default=0, blank=True, null=True)
+	amountremaining = models.IntegerField(null=True, default=0, blank=True)
 	statuschoices = [
     	('paid', 'Payment Made'),
     	('partpaid', 'Part Payment'),
     	('unpaid', 'Payment Not Made'),
     ]
-	status = models.CharField(max_length=100, choices=statuschoices, blank=True)
-	amountpaid = models.IntegerField(default=0, blank=True)
-	amountremaining = models.IntegerField(null=True, default=0, blank=True)
+	status = models.CharField(max_length=100, choices=statuschoices, blank=True, null=True)
 	paymentmethodchoices = [
     	('cashpayment', 'Cash Payment'),
     	('salarydeduction', 'Salary Deduction'),
     	('otherpayment', 'Other'),
-
     ]
-	paymentmethod = models.CharField(max_length=100, choices=paymentmethodchoices, blank=True)
+	paymentmethod = models.CharField(max_length=100, choices=paymentmethodchoices, blank=True, null=True)
 	amountrefund = models.IntegerField(null=True, default=0, blank=True)
 	refundstatuschoices = [
     	('refunded', 'Refund Made'),
-    	('norefund', 'No Refund Made'),
+    	('norefund', 'No Refund'),
     ]
 	refundstatus = models.CharField(max_length=100, choices=refundstatuschoices, null=True, blank=True)
 
 
-	def save(self, *args, **kwargs):
-		total_days = (self.dateofcancelorexpiry - self.commencementdate).days
-        # Assuming a full policy year has 365 days
-		if total_days < 365:
-			prorata_factor = total_days / 365
-			self.prorata = int((self.sumassured * self.premiumrate / 100) * prorata_factor)
-		else:
-            # If policy is for a full year, no prorating needed
-			self.prorata = int(self.sumassured * self.premiumrate / 100)
-
-        # Calculate premium payable
-		self.grandtotal = self.prorata + self.windscreenadditionalpremium + self.radioadditionalpremium + self.courtesycar + self.excessprotector
-		self.premiumpayable = self.grandtotal + self.levies
-		self.amountremaining = self.premiumpayable - self.amountpaid
-
-		super().save(*args, **kwargs)
-
 	def __str__(self):
 		return self.regno
+
