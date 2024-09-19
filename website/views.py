@@ -471,7 +471,7 @@ def allstaffvehicle(request):
 def absentstaffvehicle(request):
     absentstaffvehicles = StaffVehicle.objects.filter(status='absent')
     forms = [StaffVehicleForm(instance=vehicle) for vehicle in absentstaffvehicles]
-    return render(request, 'activestaffvehicle.html', {'forms': forms})
+    return render(request, 'absentstaffvehicle.html', {'forms': forms})
 
 def activestaffvehicle(request):
     activestaffvehicles = StaffVehicle.objects.filter(status='active')
@@ -779,7 +779,7 @@ def cancelledcompanyvehicle(request):
 def absentcompanyvehicle(request):
     absentcompanyvehicles = CompanyVehicle.objects.filter(status='absent')
     forms = [CompanyVehicleForm(instance=vehicle) for vehicle in absentcompanyvehicles]
-    return render(request, 'activecompanyvehicle.html', {'forms': forms})
+    return render(request, 'absentcompanyvehicle.html', {'forms': forms})
 
 
 def export_company_vehicles(request):
