@@ -12,12 +12,12 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-success">Update Record</button>
+        <br/><br/>
     </form>
-
         <a href="{% url 'allpremium' %}" class="btn btn-secondary">Cancel</a>
-
+        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
             <br/>
-            <br>
+            <br/>
           <form method="POST" action="{% url 'delete_premium' form.instance.pk %}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger">Delete Record</button>

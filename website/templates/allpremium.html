@@ -32,6 +32,13 @@
 
                 <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
 
+                <br/>
+                
+                  <!-- Display link to the record -->
+                <strong>Record URL:</strong> 
+                 <a href="{% url 'premiumrecord_detail' form.instance.pk %}" class="btn btn-info">Send Details</a>
+          
+
                 <hr>
             </li>
         {% endfor %}

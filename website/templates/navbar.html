@@ -64,7 +64,7 @@
       <!-- Dropdown for Premium -->
       <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="{% url 'premium' %}" id="companyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Premium
+              Premiums
           </a>
           <ul class="dropdown-menu" aria-labelledby="companyDropdown">
               <li><a class="dropdown-item" href="{% url 'premiumform' %}">Compute Premium</a></li>
@@ -78,16 +78,26 @@
               <li><a class="dropdown-item" href="{% url 'salarydeduction' %}">Salary Deductions Payments</a>
                 <li><a class="dropdown-item" href="{% url 'otherpayment' %}">Other Payment Methods</a></li>
               <li><a class="dropdown-item" href="{% url 'premiumrefund' %}">Premium Refunds </a>
-
               </li>
           </ul>
       </li>
 
+        {% if user.is_authenticated %}
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="{% url 'messages' %}" id="logoutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Customer Feedback
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="logoutDropdown">
+                <li><a class="dropdown-item" href="{% url 'messages' %}">Customer Feedback</a></li>
+                <li><a class="dropdown-item" href="{% url 'contactus' %}">Contact Us</a></li>
+          </ul>
+      </li>   
+        {% else %}
+
         <li class="nav-item">
           <a class="nav-link" href="{% url 'contactus' %}">Contact Us</a>
         </li>
-
-      
+        {% endif %}
 
 
         {% if user.is_authenticated %}

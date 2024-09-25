@@ -1,10 +1,13 @@
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from django.http import HttpResponse, FileResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q  # for complex queries
-from django.urls import reverse
-from django.http import HttpResponse
+from django.core.mail import send_mail
 from import_export.admin import ExportActionModelAdmin
 from import_export.formats.base_formats import XLSX
 import openpyxl
@@ -12,24 +15,22 @@ import openpyxl
 from .models import StaffVehicle
 from .models import CompanyVehicle
 from .models import Premium
+from .models import StaffMember
+from .models import ContactMessage
 
 from .forms import StaffVehicleForm
 from .forms import CompanyVehicleForm
 from .forms import PremiumForm
-
 from .forms import UpdateVehicleForm
 from .forms import UpdateStaffVehicleForm
 from .forms import UpdateCompanyVehicleForm
 from .forms import UpdatePremiumForm
 
-
 from .resources import StaffVehicleResource
 from .resources import CompanyVehicleResource
 from .resources import PremiumResource
+from .resources import ContactMessageResource
 
-from django.core.mail import send_mail
-
-import os
 
 # Create your views here.
 def home(request):
@@ -38,46 +39,66 @@ def home(request):
 def thankyou(request):
     return render(request, 'thankyou.html', {})
 
-from django.core.mail import send_mail
 def contactus(request):
     if request.method == 'POST':
         name = request.POST['name']
+        staffno = request.POST['staffno']
+        natureoffeedback = request.POST['natureoffeedback']
         email = request.POST['email']
         subject = request.POST['subject']
         message = request.POST['message']
-
+        # Check if the staffno exists in the StaffMember model
+        try:
+            staff_member = StaffMember.objects.get(staffno=staffno)
+        except StaffMember.DoesNotExist:
+            messages.error(request, 'Invalid staff number. Please enter a valid staff number.')
+            return redirect('contactus')
+        # Save the message to the database
+        contact_message = ContactMessage.objects.create(
+            name=name,
+            staffno=staffno,
+            natureoffeedback=natureoffeedback,
+            email=email,
+            subject=subject,
+            message=message
+        )
         # Optional: Send an email
         send_mail(
-            subject,
-            message,
+            f"New message from {name}",
+            f"Staff No: {staffno}, Nature of Feedback: {natureoffeedback}, Subject: {subject}, Message: {message}",
             email,
-            ['sharlynnmuturi@gmail.com'],  # Change to the email
+            ['sharlynnmuturi@gmail.com'],  # Change to the recipient's email
         )
-
         messages.success(request, 'Your message has been sent!')
         return redirect('contactus')
     return render(request, 'contactus.html')
 
-def download_logbook(request, pk):
-    staff_vehicle = get_object_or_404(StaffVehicle, pk=pk)
-    logbook_file = staff_vehicle.logbook
+def feedbacks(request):
+    feedback_messages = ContactMessage.objects.all().order_by('-sent_at')
+    return render(request, 'messages.html', {'messages': feedback_messages})
 
-    if not logbook_file:
-        raise Http404("No logbook file available.")
+def delete_feedback(request, pk):
+    feedback = get_object_or_404(ContactMessage, pk=pk)
+    
+    if request.method == 'POST':
+        feedback.delete()
+        return redirect('messages')  # Redirect after deletion
+    
+    return render(request, 'confirm_delete.html', {'feedback': feedback})
 
-    return FileResponse(logbook_file, as_attachment=True)
+def export_feedbacks(request):
+    resource = ContactMessageResource()
+    dataset = resource.export()  # Export data from the resource
+    # Specify your desired filename here
+    filename = 'AllFeedbacks.xlsx'
+    # Create an HTTP response with the exported data
+    response = HttpResponse(dataset.xlsx, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
 
+############################################################################################################# PREMIUMS #################################
 
-def download_logbook2(request, pk):
-    company_vehicle = get_object_or_404(CompanyVehicle, pk=pk)
-    logbook_file = company_vehicle.logbook
-
-    if not logbook_file:
-        raise Http404("No logbook file available.")
-
-    return FileResponse(logbook_file, as_attachment=True)
-
-##################################################################################### PREMIUMS ##########################
 def premium(request):
     all_premium = Premium.objects.all()
     return render(request, 'premium.html', {'all':all_premium})
@@ -94,7 +115,7 @@ def premiumform(request):
             # Redirect to the computedpremium view with the premium object's ID
             return redirect('computedpremium', pk=premium.pk)
         else:
-            messages.error(request, 'There was an error in your input. Please check for error messages and try again.')
+            messages.error(request, 'There was an error in your input. Check for any error messages and try again.')
             # Render the form with errors
             return render(request, 'premiumform.html', {'form': form})
     else:
@@ -102,6 +123,9 @@ def premiumform(request):
         form = PremiumForm()
         return render(request, 'premiumform.html', {'form': form})
 
+def premiumrecord_detail(request, record_id):
+    premium = get_object_or_404(Premium, id=record_id)
+    return render(request, 'premiumrecord_detail.html', {'premium': premium})
 
 def searchallpremium(request):
     if request.method == "POST":
@@ -375,34 +399,51 @@ def export_other_payments(request):
     return response
 
 
-################################################################# STAFF VEHICLES ##########################################################################
+################################################################################################## STAFF VEHICLES #######################################
 
 def staffvehicle(request):
     all_staff_vehicle = StaffVehicle.objects.all()
     return render(request, 'staffvehicle.html', {'all':all_staff_vehicle})
+    
 
 def staffvehicleform(request):
     if request.method == "POST":
-        form = StaffVehicleForm(request.POST, request.FILES, user=request.user)  # Include request.FILES for file upload
-        regno = form.data.get('regno')  # Get the registration number from form data
-
+        form = StaffVehicleForm(request.POST, request.FILES, user=request.user)
+        regno = form.data.get('regno')  # Get the registration number from form
+        staffno = form.data.get('staffno')  # Get the staff number from form
+        # Check if the entered staffno exists in StaffMember model
+        if not StaffMember.objects.filter(staffno=staffno).exists():
+            messages.error(request, f'Staff number {staffno} does not exist. Please enter a valid staff number.')
+            return render(request, 'staffvehicleform.html', {'form': form})  # Re-render the form with error message
         # Check if a vehicle with the same regno already exists
         if StaffVehicle.objects.filter(regno=regno).exists():
             vehicle = StaffVehicle.objects.get(regno=regno)
-
             # Redirect to the update form for status and date_of_cancel
-            messages.warning(request, f'Vehicle {regno} already exist.')
+            messages.warning(request, f'Vehicle {regno} already exists. Update Record Here.')
             return redirect('update_vehicle', vehicle_id=vehicle.id)
-
         if form.is_valid():
             form.save()
             messages.success(request, 'Record Submitted Successfully!')
             return redirect('thankyou')
         else:
-            messages.error(request, 'There was an error in your input. Please check for error messages and try again.')
+            messages.error(request, 'There was an error in your input. Kindly check for any error messages and try again.')
     else:
         form = StaffVehicleForm(user=request.user)
+
     return render(request, 'staffvehicleform.html', {'form': form})
+
+def download_logbook(request, pk):
+    staff_vehicle = get_object_or_404(StaffVehicle, pk=pk)
+    logbook_file = staff_vehicle.logbook
+
+    if not logbook_file:
+        raise Http404("No logbook file available.")
+
+    return FileResponse(logbook_file, as_attachment=True)
+
+def record_detail(request, vehicle_id):
+    vehicle = get_object_or_404(StaffVehicle, id=vehicle_id)
+    return render(request, 'record_detail.html', {'vehicle': vehicle})
 
 def update_staff_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(StaffVehicle, id=vehicle_id)
@@ -411,7 +452,7 @@ def update_staff_vehicle(request, vehicle_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Vehicle record updated successfully.')
-            return redirect('update_staff_vehicle', vehicle_id=vehicle_id)  # Change to your list view or desired redirect
+            return redirect('update_staff_vehicle', vehicle_id=vehicle_id)
     else:
         form = UpdateStaffVehicleForm(instance=vehicle)
 
@@ -692,7 +733,7 @@ def export_thirdparty_vehicles(request):
     return response
 
 
-######################################################################### COMPANY VEHICLES ######################################################################
+#################################################################################################### COMPANY VEHICLES #################################
 
 def companyvehicle(request):
     all_company_vehicle = CompanyVehicle.objects.all()
@@ -708,7 +749,7 @@ def companyvehicleform(request):
             vehicle = CompanyVehicle.objects.get(regno=regno)
 
             # Redirect to the update form for status and date_of_cancel
-            messages.warning(request, f'Vehicle {regno} already exist.')
+            messages.warning(request, f'Vehicle {regno} already exist. Update Record Here.')
             return redirect('update_company_vehicle', vehicle_id=vehicle.id)
 
         if form.is_valid():
@@ -716,10 +757,23 @@ def companyvehicleform(request):
             messages.success(request, 'Record Submitted Successfully!')
             return redirect('companyvehicleform')
         else:
-            messages.error(request, 'There was an error in your input. Please check for error messages and try again.')
+            messages.error(request, 'There was an error in your input. Check for any error messages and try again.')
     else:
         form = CompanyVehicleForm()
     return render(request, 'companyvehicleform.html', {'form': form})
+
+def companyrecord_detail(request, vehicle_id):
+    vehicle = get_object_or_404(CompanyVehicle, id=vehicle_id)
+    return render(request, 'companyrecord_detail.html', {'vehicle': vehicle})
+    
+def download_logbook2(request, pk):
+    company_vehicle = get_object_or_404(CompanyVehicle, pk=pk)
+    logbook_file = company_vehicle.logbook
+
+    if not logbook_file:
+        raise Http404("No logbook file available.")
+
+    return FileResponse(logbook_file, as_attachment=True)
 
 def update_company_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(CompanyVehicle, id=vehicle_id)
@@ -728,7 +782,7 @@ def update_company_vehicle(request, vehicle_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Vehicle record updated successfully.')
-            return redirect('update_company_vehicle', vehicle_id=vehicle_id)  # Change to your list view or desired redirect
+            return redirect('update_company_vehicle', vehicle_id=vehicle_id)
     else:
         form = UpdateCompanyVehicleForm(instance=vehicle)
 

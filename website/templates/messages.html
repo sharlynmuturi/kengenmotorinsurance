@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Customer Feedback</h1>
+        <a href="{% url 'export_feedbacks' %}" class="btn btn-primary">Export All To Excel</a>
+
+<ul>
+    {% for message in messages %}
+        <li>
+            <strong>Name</strong> {{ message.name }}<br>
+            <strong>Email</strong> {{ message.email }}<br> 
+            <strong>Nature of Feedback:</strong> {{ message.natureoffeedback }}<br> 
+            <strong>Subject:</strong> {{ message.subject }}<br> 
+            <strong>Message:</strong> {{ message.message }}<br>
+            <em>Sent at: {{ message.sent_at }}</em>
+            <form method="POST" action="{% url 'delete_feedback' message.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete Message</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+
+
+{% endblock %}

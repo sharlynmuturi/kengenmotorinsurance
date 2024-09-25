@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Company Motor</h1>
+
+<h3>Cover Details for {{ vehicle.regno }}</h3>
+
+<p><strong>Reg No:</strong> {{ vehicle.regno }}</p>
+<p><strong>Area:</strong> {{ vehicle.area }}</p>
+<p><strong>Sum Assured:</strong> {{ vehicle.sumassured }}</p>
+<p><strong>Make:</strong> {{ vehicle.make }}</p>
+<p><strong>Rating:</strong> {{ vehicle.rating }}</p>
+<p><strong>Chasis No:</strong> {{ vehicle.chasisno }}</p>
+<p><strong>Year of Manufacture:</strong> {{ vehicle.yom }}</p>
+<p><strong>Commencement Date:</strong> {{ vehicle.commencementdate }}</p>
+
+<p>
+    <strong>Logbook:</strong>
+
+    {% if vehicle.logbook and vehicle.logbook.url %}
+        <a href="{% url 'download_logbook2' vehicle.pk %}" target="_blank">Download Logbook</a>
+    {% else %}
+        No logbook uploaded.
+    {% endif %} 
+                
+</p>
+
+<a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+{% endblock %}

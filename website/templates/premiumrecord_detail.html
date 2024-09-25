@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Premiums</h1>
+
+<h3>Premium Computations for {{ premium.regno }}</h3>
+
+<p><strong>Reg No:</strong> {{ premium.regno }}</p>
+<p><strong>First Name:</strong> {{ premium.firstname }}</p>
+<p><strong>Middle Name:</strong> {{ premium.middlename }}</p>
+<p><strong>Last Name:</strong> {{ premium.lastname }}</p>
+<p><strong>Staff No:</strong> {{ premium.staffno }}</p>
+<p><strong>Type of Cover:</strong> {{ premium.get_typeofcover_display }}</p>
+<p><strong>Commencement Date:</strong> {{ premium.commencementdate }}</p>
+<p><strong>Date of Cancel or Expiry:</strong> {{ premium.dateofcancelorexpiry }}</p>
+<p><strong>Sum Assured:</strong> {{ premium.sumassured }}</p>
+<p><strong>Premium Rate:</strong> {{ premium.premiumrate }}</p>
+<p><strong>Annual Premium:</strong> {{ premium.annualpremium }}</p>
+<p><strong>Prorata:</strong> {{ premium.prorata }}</p>
+<p><strong>Windscreen Additional Premium:</strong> {{ premium.windscreenadditionalpremium }}</p>
+<p><strong>Radio Additional Premium:</strong> {{ premium.radioadditionalpremium }}</p>
+<p><strong>Courtesy Car:</strong> {{ premium.courtesycar }}</p>
+<p><strong>Excess Protector:</strong> {{ premium.excessprotector }}</p>
+<p><strong>Grand Total:</strong> {{ premium.grandtotal }}</p>
+<p><strong>Levies:</strong> {{ premium.levies }}</p>
+<p><strong>Premium Payable:</strong> {{ premium.premiumpayable }}</p>
+
+<a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+
+{% endblock %}

@@ -13,15 +13,16 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Confirm</button>
+    <br/><br/>
 </form>
-
-<br>
 <a href="{% url 'staffvehicleform' %}" class="btn btn-secondary">Cancel</a>
-</center>
+<a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+<br><br>
   <form method="POST" action="{% url 'delete_staff_vehicle' form.instance.pk %}">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Delete Vehicle</button>
     </form>
+</center>
 
 {% else %}
 <h2> Please Log In to Update Cover Status </h2>

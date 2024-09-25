@@ -4,13 +4,11 @@
 <h1>Staff Motor</h1>
 {% if user.is_authenticated %}
 
-      <form class="d-flex" role="search" method=POST action="{% url 'searchallstaffvehicle' %}">
-      {% csrf_token %}
+    <form class="d-flex" role="search" method="POST" action="{% url 'searchallstaffvehicle' %}">
+        {% csrf_token %}
         <input class="form-control me-2" type="search" placeholder="Search Staff Vehicle" aria-label="Search" name="searchedstaffvehicle" style="width: 200px;">
         <button class="btn btn-outline-secondary" type="submit">Search</button>
-      </form>
-
-
+    </form>
 
     <h2>All Cover Records</h2>
     <a href="{% url 'export_staff_vehicles' %}" class="btn btn-primary">Export All to Excel</a>
@@ -27,15 +25,20 @@
             <li>
                 {{ form.as_p }}
                 
-<!--                 {% if staff_vehicle.logbook %}
-                    <a href="{% url 'download_logbook' staff_vehicle.pk %}" class="btn btn-primary">Download Logbook</a>
-                {% endif %} -->
-
-
+                {% if form.instance.logbook and form.instance.logbook.url %}
+                    <a href="{% url 'download_logbook' form.instance.pk %}" target="_blank">Download Logbook</a>
+                    <br/>
+                {% else %}
+                    <p>No logbook available for download.</p>
+                {% endif %}
+                <br/>
                 <!-- Update button with a link to the update view -->
                 <a href="{% url 'update_staff_vehicle' form.instance.pk %}" class="btn btn-primary">Update</a>
-
                 <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+                <br/>
+                  <!-- Display link to the record -->
+                <strong>Record URL:</strong> 
+                 <a href="{% url 'record_detail' form.instance.pk %}" class="btn btn-info">Send Details</a>
 
                 <hr>
             </li>
@@ -43,13 +46,8 @@
     </ul>
 
 {% else %}
-<h2> Please Log In to View Page </h2>
+    <h2>Please Log In to View Page</h2>
     <a href="{% url 'loginuser' %}">Login Here</a>
-
 {% endif %}
 
-
 {% endblock %}
-
-
-

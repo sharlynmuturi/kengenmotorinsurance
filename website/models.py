@@ -38,7 +38,6 @@ class StaffVehicle(models.Model):
 	]
 	typeofcover = models.CharField(max_length=100, choices=typeofcoverchoices, null=True)
 	commencementdate = models.DateField(null=True, default=datetime.date.today)
-	logbook = models.FileField(blank=True,null=True)  # Optional file upload
 	statuschoices = [
     	('absent', 'Cover Not Provided'),	
     	('active', 'Cover Active'),
@@ -46,6 +45,7 @@ class StaffVehicle(models.Model):
     ]
 	status = models.CharField(max_length=100, choices=statuschoices, default='absent', blank=True, null=True)
 	dateofcancelorexpiry = models.DateField(null=True, blank=True)
+	logbook = models.FileField(upload_to='stafflogbooks/', null=True)
 
 	def __str__(self):
 		return self.regno
@@ -60,7 +60,6 @@ class CompanyVehicle(models.Model):
 	chasisno = models.CharField(max_length=100, null=True)  # Default is 'N/A'
 	yom = models.IntegerField(null=True)  # Default year of manufacture is 2000
 	commencementdate = models.DateField(null=True, default=datetime.date.today)
-	logbook = models.FileField(blank=True, null=True)  # Optional file upload
 	statuschoices = [
 	    ('absent', 'Cover Not Provided'),
     	('active', 'Cover Active'),
@@ -68,6 +67,7 @@ class CompanyVehicle(models.Model):
     ]
 	status = models.CharField(max_length=100, choices=statuschoices, default='absent', blank=True, null=True)
 	dateofcancelorexpiry = models.DateField(null=True, blank=True)
+	logbook = models.FileField(upload_to='companylogbooks/', blank=True, null=True)  # Optional file upload
 
 	def __str__(self):
 		return self.regno
@@ -80,6 +80,18 @@ class Premium(models.Model):
 	middlename = models.CharField(max_length=100, blank=True, null=True)
 	lastname = models.CharField(max_length=100, blank=True, null=True)
 	staffno = models.IntegerField(null=True, blank=True)
+	employmentstatuschoices = [
+	        ('staff', 'Staff'),
+	        ('director/manager', 'Director/Manager'),
+	        ('ex-staff', 'Ex-Staff'),
+	        ('ex-director/manager', 'Ex-Director/Manager'),
+	]
+	employmentstatus = models.CharField(max_length=100, choices=employmentstatuschoices, blank=True, null=True)
+	typeofvehiclechoices = [
+		('private', 'Private'),
+		('commercial', 'Commercial'),
+	]
+	typeofvehicle = models.CharField(max_length=100, choices=typeofvehiclechoices, blank=True, null=True)
 	typeofcoverchoices = [
 		('comprehensive', 'Comprehensive'),
 		('thirdparty', 'ThirdParty'),
@@ -123,3 +135,36 @@ class Premium(models.Model):
 	def __str__(self):
 		return self.regno
 
+class StaffMember(models.Model):
+    staffno = models.CharField(max_length=20, unique=True)
+    firstname = models.CharField(max_length=50, null=True)
+    middlename = models.CharField(max_length=50, blank=True, null=True)
+    lastname = models.CharField(max_length=50, null=True)
+    personnelarea = models.CharField(max_length=100, null=True)
+    organizationalarea = models.CharField(max_length=100, null=True)
+    personnelsubarea = models.CharField(max_length=100, null=True)
+    telephoneno = models.CharField(max_length=15, blank=True, null=True)
+    idno = models.CharField(max_length=20, null=True)
+    krapin = models.CharField(max_length=20, null=True) 
+
+    def __str__(self):
+        return f"{self.staffno} - {self.firstname} {self.lastname}"
+
+class ContactMessage(models.Model):
+	name = models.CharField(max_length=100)
+	staffno = models.CharField(max_length=20, null=True)
+	natureoffeedbackchoices = [
+		('inquiry', 'Inquiry'),
+		('compliment', 'Compliment'),
+		('complaint', 'Complaint'),
+		('generalcomment', 'General Comment'),
+		('technicalissue', 'Technical Issue'),
+	]
+	natureoffeedback = models.CharField(max_length=100, choices=natureoffeedbackchoices, null=True)
+	email = models.EmailField()
+	subject = models.TextField()
+	message = models.TextField()
+	sent_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+	    return f"Message from {self.name} at {self.sent_at}"

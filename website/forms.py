@@ -28,7 +28,7 @@ class StaffVehicleForm(forms.ModelForm):
             self.fields['dateofcancelorexpiry'].widget.attrs['disabled'] = 'disabled'
             # Optionally set default values
             self.fields['status'].initial = 'absent'  # Example default value
-            self.fields['dateofcancelorexpiry'].initial = timezone.now().date()
+            # self.fields['dateofcancelorexpiry'].initial = timezone.now().date()
 
 
     def clean_regno(self):

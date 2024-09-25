@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Staff Motor</h1>
+
+<h3>Cover Details for {{ vehicle.regno }}</h3>
+
+<p><strong>Reg No:</strong> {{ vehicle.regno }}</p>
+<p><strong>First Name:</strong> {{ vehicle.firstname }}</p>
+<p><strong>Middle Name:</strong> {{ vehicle.middlename }}</p>
+<p><strong>Last Name:</strong> {{ vehicle.lastname }}</p>
+<p><strong>Staff No:</strong> {{ vehicle.staffno }}</p>
+<p><strong>Employment Status:</strong> {{ vehicle.get_employmentstatus_display }}</p>
+<p><strong>Email:</strong> {{ vehicle.email }}</p>
+<p><strong>Area:</strong> {{ vehicle.area }}</p>
+<p><strong>Phone No:</strong> {{ vehicle.phoneno }}</p>
+<p><strong>ID No:</strong> {{ vehicle.idno }}</p>
+<p><strong>KRA PIN:</strong> {{ vehicle.krapin }}</p>
+<p><strong>Sum Assured:</strong> {{ vehicle.sumassured }}</p>
+<p><strong>Make:</strong> {{ vehicle.make }}</p>
+<p><strong>Rating:</strong> {{ vehicle.rating }}</p>
+<p><strong>Chasis No:</strong> {{ vehicle.chasisno }}</p>
+<p><strong>Year of Manufacture:</strong> {{ vehicle.yom }}</p>
+<p><strong>Type of Vehicle:</strong> {{ vehicle.get_typeofvehicle_display }}</p>
+<p><strong>Type of Cover:</strong> {{ vehicle.get_typeofcover_display }}</p>
+<p><strong>Commencement Date:</strong> {{ vehicle.commencementdate }}</p>
+
+<p>
+    <strong>Logbook:</strong>
+    
+        {% if vehicle.logbook and vehicle.logbook.url %}
+            <a href="{% url 'download_logbook' vehicle.pk %}" target="_blank">Download Logbook</a>
+        {% else %}
+            No logbook uploaded.
+        {% endif %} 
+</p>
+
+<a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+
+{% endblock %}
+
+

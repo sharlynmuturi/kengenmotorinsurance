@@ -12,9 +12,12 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-success">Save Changes</button>
+        <br/><br/>
     </form>
-
         <a href="{% url 'allcompanyvehicle' %}" class="btn btn-secondary">Cancel</a>
+        
+    <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+
     <br/>
     <br/>
 
